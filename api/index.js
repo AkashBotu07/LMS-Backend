@@ -1,4 +1,4 @@
-// api/index.js  — temporary debug version (remove after use)
+// api/index.js  — temporary debug version (remove after fix)
 import connectDB from "./server/database/db.js";
 import app from "./server/app.js";
 
@@ -20,15 +20,15 @@ export default async function handler(req, res) {
     await ensureDB();
     return app(req, res);
   } catch (err) {
-    // Log full error to Vercel logs
     console.error("Handler error (vercel):", err && err.stack ? err.stack : err);
 
-    // For debugging only: return full error stack in response when DEBUG=true
+    // DEBUG output — only return stack when DEBUG=true
     if (process.env.DEBUG === "true") {
       const message = err && err.stack ? err.stack : String(err);
       res.status(500).type("text/plain").send(`DEBUG ERROR:\n\n${message}`);
-    } else {
-      res.status(500).send("internal server error");
+      return;
     }
+
+    res.status(500).send("internal server error");
   }
 }
